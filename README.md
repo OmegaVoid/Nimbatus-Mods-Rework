@@ -5,6 +5,9 @@ Mods for the Nimbatus Alpha
 
 Visit the [Wiki](https://github.com/OmegaRogue/Nimbatus-Mods/wiki) for guides on how to install this
 
+### Dev Install Note
+For a Developer install, change the path in DevInstallPrepare.bat to your Nimbatus Install Location and run DevInstallPrepare.bat to create a symlink to make references work better
+
 Add Suggestions in Issues
 ## Nimbatus - The Space Drone Constructor
 [Nimbatus Website](http://www.nimbatus.ch/)
