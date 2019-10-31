@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{884B9EFA-0B1E-4799-B94D-DD38A1C3F20F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp.API.mm", "Assembly-CSharp.API.mm\Assembly-CSharp.API.mm.csproj", "{884B9EFA-0B1E-4799-B94D-DD38A1C3F20F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaMod", "OmegaMod\OmegaMod.csproj", "{C43BE2E2-EB2A-47F9-A664-C35AD14214BC}"
 EndProject
