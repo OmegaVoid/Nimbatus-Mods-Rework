@@ -1,4 +1,4 @@
-namespace CheatMod
+﻿namespace CheatMod
 {
 	public class CheatMod
 	{

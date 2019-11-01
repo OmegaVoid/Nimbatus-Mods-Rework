@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("OmegaVoid")]
-[assembly: AssemblyProduct("API")]
+[assembly: AssemblyProduct("Assembly-CSharp.API.mm")]
 [assembly: AssemblyCopyright("Copyright © OmegaVoid 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
