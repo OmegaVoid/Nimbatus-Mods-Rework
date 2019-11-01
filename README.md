@@ -1,6 +1,12 @@
 # Nimbatus Mods
 Mods for the Nimbatus Alpha
 
+---
+
+[![Build status](https://ci.appveyor.com/api/projects/status/m3degxgw6g16n2gi?svg=true)](https://ci.appveyor.com/project/OmegaRogue/nimbatus-mods-rework)
+[![Build status](https://ci.appveyor.com/api/projects/status/m3degxgw6g16n2gi/branch/master?svg=true)](https://ci.appveyor.com/project/OmegaRogue/nimbatus-mods-rework/branch/master)
+
+
 ## Getting Started
 
 Visit the [Wiki](https://github.com/OmegaRogue/Nimbatus-Mods/wiki) for guides on how to install this
