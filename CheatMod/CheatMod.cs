@@ -1,11 +1,12 @@
 ﻿using Assets.Nimbatus.Scripts.ResourceCollection;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks;
 
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+
+using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
+using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources;
+using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks;
 
 namespace CheatMod
 {
@@ -47,17 +48,17 @@ namespace CheatMod
 		{
 			// += your hooks
 			if (infiniteEnergy)
-				On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries.Battery.Awake += Battery_Awake;
+				Battery.Awake += Battery_Awake;
 			if (infiniteFuel)
-				On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks.FuelTank.Awake += FuelTank_Awake;
+				FuelTank.Awake += FuelTank_Awake;
 			if (infiniteResources)
-				On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank.Update +=
-					ResourceTank_Update;
+				ResourceTank.FixedUpdate +=
+					ResourceTank_FixedUpdate;
 		}
 
-		private void ResourceTank_Update(
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank.orig_Update orig,
-			ResourceTank                                                                                         self
+		private void ResourceTank_FixedUpdate(
+			ResourceTank.orig_FixedUpdate                                                         orig,
+			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank self
 		)
 		{
 			self.SetResourceAmount(infiniteType, self.ResourceCapacity);
@@ -65,8 +66,8 @@ namespace CheatMod
 		}
 
 		private void FuelTank_Awake(
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks.FuelTank.orig_Awake orig,
-			FuelTank                                                                               self
+			FuelTank.orig_Awake                                                      orig,
+			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks.FuelTank self
 		)
 		{
 			self.CurrentFuelAmount = 1E+19f;
@@ -76,8 +77,8 @@ namespace CheatMod
 		}
 
 		private void Battery_Awake(
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries.Battery.orig_Awake orig,
-			Battery                                                                               self
+			Battery.orig_Awake                                                      orig,
+			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries.Battery self
 		)
 		{
 			self.MaxEnergyAmount     = 1E+19f;
@@ -90,10 +91,10 @@ namespace CheatMod
 		public void OnDisable()
 		{
 			// -= your hooks (a future Partiality update will do this automatically)
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries.Battery.Awake  -= Battery_Awake;
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks.FuelTank.Awake -= FuelTank_Awake;
-			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank.Update -=
-				ResourceTank_Update;
+			Battery.Awake  -= Battery_Awake;
+			FuelTank.Awake -= FuelTank_Awake;
+			ResourceTank.FixedUpdate -=
+				ResourceTank_FixedUpdate;
 		}
 	}
 }
