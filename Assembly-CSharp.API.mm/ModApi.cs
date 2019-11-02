@@ -195,7 +195,7 @@ namespace API
 		{
 			labelSizeAdd = 0;
 			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
-			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Closed Alpha " +
+			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
 						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
 		}
 
