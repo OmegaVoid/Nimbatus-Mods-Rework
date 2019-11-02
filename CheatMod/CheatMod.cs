@@ -1,4 +1,6 @@
-﻿using Assets.Nimbatus.Scripts.ResourceCollection;
+﻿using System;
+
+using Assets.Nimbatus.Scripts.ResourceCollection;
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -13,11 +15,12 @@ namespace CheatMod
 	[BepInPlugin(Name: "Cheat Mod", Version: "2.0.0", GUID: "CheatMod")]
 	public class CheatMod : BaseUnityPlugin
 	{
-		private readonly bool infiniteEnergy    = true;
-		private readonly bool infiniteFuel      = true;
-		private readonly bool infiniteResources = true;
+		private readonly ConfigWrapper<bool> _infiniteEnergy;
+		private readonly ConfigWrapper<bool> _oreType;
+		private          ConfigWrapper<bool> _infiniteFuel;
+		private          ConfigWrapper<bool> _infiniteResources;
+		private          EResourceType       _infiniteType = EResourceType.CommonOre;
 
-		private readonly EResourceType infiniteType = EResourceType.CommonOre;
 
 		public CheatMod()
 		{
@@ -30,29 +33,56 @@ namespace CheatMod
 
 
 			Config.SaveOnConfigSet = true;
-
-			Config.Wrap<bool>(energyConf);
-			Config.Wrap<bool>(fuelConf);
-			Config.Wrap<bool>(resourceConf);
-			Config.Wrap<bool>(oreConf);
+			_infiniteEnergy        = Config.Wrap<bool>(energyConf);
+			_infiniteFuel          = Config.Wrap<bool>(fuelConf);
+			_infiniteResources     = Config.Wrap<bool>(resourceConf);
+			_oreType               = Config.Wrap<bool>(oreConf);
 
 			Logger.LogInfo(Config);
+			Config.ConfigReloaded += UpdateConfig;
 			OnEnable();
 		}
-
 
 		public new static ManualLogSource Logger { get; set; }
 		public new static ConfigFile      Config { get; set; }
 
+		private void UpdateConfig(object sender, EventArgs eventArgs)
+		{
+			if (_oreType.Value)
+				_infiniteType = EResourceType.RareOre;
+			else
+				_infiniteType = EResourceType.CommonOre;
+			ModuleManager();
+		}
+
+
 		public void OnEnable()
 		{
 			// += your hooks
-			if (infiniteEnergy)
+			if (_infiniteEnergy.Value)
 				Battery.Awake += Battery_Awake;
-			if (infiniteFuel)
+			if (_infiniteEnergy.Value)
 				FuelTank.Awake += FuelTank_Awake;
-			if (infiniteResources)
+			if (_infiniteEnergy.Value)
 				ResourceTank.FixedUpdate +=
+					ResourceTank_FixedUpdate;
+		}
+
+		public void ModuleManager()
+		{
+			if (_infiniteEnergy.Value)
+				Battery.Awake += Battery_Awake;
+			else
+				Battery.Awake -= Battery_Awake;
+			if (_infiniteEnergy.Value)
+				FuelTank.Awake += FuelTank_Awake;
+			else
+				FuelTank.Awake -= FuelTank_Awake;
+			if (_infiniteEnergy.Value)
+				ResourceTank.FixedUpdate +=
+					ResourceTank_FixedUpdate;
+			else
+				ResourceTank.FixedUpdate -=
 					ResourceTank_FixedUpdate;
 		}
 
@@ -61,7 +91,7 @@ namespace CheatMod
 			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank self
 		)
 		{
-			self.SetResourceAmount(infiniteType, self.ResourceCapacity);
+			self.SetResourceAmount(_infiniteType, self.ResourceCapacity);
 			orig(self);
 		}
 
