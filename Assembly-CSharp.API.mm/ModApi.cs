@@ -27,7 +27,41 @@ namespace API
 	{
 	}
 
+	[MonoModPatch("global::Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
+
+	// ReSharper disable once InconsistentNaming
+	internal class patch_ShowVersionNumber : ShowVersionNumber
+	{
+		public int labelSizeAdd;
+
+		// public OmegaModLoader Mod;
+		public extern void orig_Update();
+
+		public void Update()
+		{
+			labelSizeAdd = 0;
+			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
+			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
+						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
+		}
+
+		public void Start()
+		{
+			//this.Mod = new OmegaModLoader();
+			Debug.Log("Running OmegaMod");
+
+			// this.Mod.Startup();
+			//Label.gameObject.AddComponent<ModConfigurator>();
+
+			Debug.Log(Application.streamingAssetsPath);
+		}
+	}
+
+	#region API
+
 	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.BindableDronePart")]
+
+	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_BindableDronePart : BindableDronePart
 	{
 		[MonoModIgnore] internal List<KeyBinding> KeyBindings;
@@ -55,6 +89,8 @@ namespace API
 	}
 
 	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts.SensorPart")]
+
+	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_SensorPart : SensorPart
 	{
 		[MonoModIgnore] internal List<KeyBinding> EventBindings;
@@ -80,6 +116,8 @@ namespace API
 				EventBindings.Remove(key);
 		}
 	}
+
+	#endregion
 
 	public static class AssetBundleModule
 	{
@@ -143,36 +181,6 @@ namespace API
 		}
 	}
 
-//	public class ConfigManager
-//	{
-//		private readonly string _folder;
-//
-//		public ConfigManager(string folder)
-//		{
-//			_folder = folder;
-//		}
-//
-//		public string Folder => Path.Combine(FolderStructure.ConfigFolder, _folder);
-//		public string FileExtension => ".json";
-//
-//		public JObject LoadModConfig(PartialityMod mod)
-//		{
-//			if (mod == null) throw new ArgumentNullException(nameof(mod));
-//			var path = GetModConfigFilePath(mod);
-//			var json = File.ReadAllText(path);
-//			return JObject.Parse(json);
-//		}
-//
-//		private string GetModConfigFilePath(PartialityMod mod)
-//		{
-//			var configName = mod.ModID;
-//			if (configName == null) throw new ArgumentException("NimbatusMod.Name is null", nameof(mod));
-//			configName = configName.ToLower();
-//			var path = Path.Combine(Folder, configName) + FileExtension;
-//			return path;
-//		}
-//	}
-
 
 	public static class FolderStructure
 	{
@@ -181,35 +189,5 @@ namespace API
 		public static readonly string ModsFolder   = Path.Combine(DataFolder, "Mods");
 		public static readonly string ConfigFolder = Path.Combine(DataFolder, "Config");
 		public static readonly string AssetsFolder = Path.Combine(DataFolder, "Assets");
-	}
-
-	[MonoModPatch("global::Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
-	internal class patch_ShowVersionNumber : ShowVersionNumber
-	{
-		public int labelSizeAdd;
-
-		// public OmegaModLoader Mod;
-		public extern void orig_Update();
-
-		public void Update()
-		{
-			labelSizeAdd = 0;
-			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
-			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
-						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
-		}
-
-		public void Start()
-		{
-			new Color(10, 10, 10);
-
-			//this.Mod = new OmegaModLoader();
-			Debug.Log("Running OmegaMod");
-
-			// this.Mod.Startup();
-			//Label.gameObject.AddComponent<ModConfigurator>();
-
-			Debug.Log(Application.streamingAssetsPath);
-		}
 	}
 }
