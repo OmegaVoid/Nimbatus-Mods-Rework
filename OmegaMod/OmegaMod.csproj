@@ -36,18 +36,54 @@
       <HintPath>..\Nimbatus\Windows64\BepInEx\core\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
+      <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Nimbatus\Windows64\BepInEx\DumpedAssemblies\Assembly-CSharp.dll</HintPath>
+      </Reference>
     <Reference Include="BepInEx, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
+      <Reference Include="Mono.Cecil, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+          <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.dll</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="Mono.Cecil.Mdb, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+          <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="Mono.Cecil.Pdb, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+          <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="Mono.Cecil.Rocks, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
+          <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="MonoMod, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\MonoMod.19.11.1.1\lib\net40\MonoMod.exe</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="MonoMod.Utils, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\packages\MonoMod.Utils.19.11.1.1\lib\net40\MonoMod.Utils.dll</HintPath>
+          <Private>True</Private>
+      </Reference>
+      <Reference Include="Sirenix.Serialization, Version=2.1.1.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\Sirenix.Serialization.dll</HintPath>
+      </Reference>
       <Reference Include="System"/>
       <Reference Include="System.Core"/>
       <Reference Include="System.Data"/>
       <Reference Include="System.Xml"/>
+      <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Nimbatus\Windows64\BepInEx\DumpedAssemblies\UnityEngine.CoreModule.dll</HintPath>
+      </Reference>
   </ItemGroup>
   <ItemGroup>
       <Compile Include="OmegaMod.cs"/>
       <Compile Include="Properties\AssemblyInfo.cs"/>
+  </ItemGroup>
+    <ItemGroup>
+        <None Include="packages.config"/>
   </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
