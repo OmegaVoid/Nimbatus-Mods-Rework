@@ -47,6 +47,9 @@
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
+        <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>..\Nimbatus\Windows64\BepInEx\DumpedAssemblies\UnityEngine.CoreModule.dll</HintPath>
         </Reference>
@@ -57,10 +60,10 @@
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-                         Other similar extension points exist, see Microsoft.Common.targets.
-                    <Target Name="BeforeBuild">
-                    </Target>
-                    <Target Name="AfterBuild">
-                    </Target>
-                    -->
+                           Other similar extension points exist, see Microsoft.Common.targets.
+                      <Target Name="BeforeBuild">
+                      </Target>
+                      <Target Name="AfterBuild">
+                      </Target>
+                      -->
 </Project>
