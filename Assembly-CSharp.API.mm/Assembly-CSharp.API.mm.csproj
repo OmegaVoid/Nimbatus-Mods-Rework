@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\BepInEx\DumpedAssemblies\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.dll</HintPath>

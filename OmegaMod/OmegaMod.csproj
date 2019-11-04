@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')"/>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -38,6 +38,7 @@
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Nimbatus\Windows64\BepInEx\DumpedAssemblies\Assembly-CSharp.dll</HintPath>
+        <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx, Version=5.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.dll</HintPath>
@@ -45,19 +46,19 @@
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
       <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.dll</HintPath>
-      <Private>True</Private>
+        <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Mdb, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
       <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-      <Private>True</Private>
+        <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Pdb, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
       <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-      <Private>True</Private>
+        <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Rocks, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
       <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-      <Private>True</Private>
+        <Private>False</Private>
     </Reference>
     <Reference Include="MonoMod, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\MonoMod.19.11.1.1\lib\net40\MonoMod.exe</HintPath>
@@ -65,30 +66,33 @@
     </Reference>
     <Reference Include="MonoMod.Utils, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\MonoMod.Utils.19.11.1.1\lib\net40\MonoMod.Utils.dll</HintPath>
-      <Private>True</Private>
+        <Private>False</Private>
     </Reference>
     <Reference Include="Sirenix.Serialization, Version=2.1.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\Sirenix.Serialization.dll</HintPath>
+        <Private>False</Private>
     </Reference>
-    <Reference Include="System"/>
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Data"/>
-    <Reference Include="System.Xml"/>
+      <Reference Include="System"/>
+      <Reference Include="System.Core"/>
+      <Reference Include="System.Data"/>
+      <Reference Include="System.Xml"/>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.dll</HintPath>
+        <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\SteamLibrary\steamapps\common\Nimbatus\Windows64\BepInEx\DumpedAssemblies\UnityEngine.CoreModule.dll</HintPath>
+        <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OmegaMod.cs"/>
-    <Compile Include="Properties\AssemblyInfo.cs"/>
+      <Compile Include="OmegaMod.cs"/>
+      <Compile Include="Properties\AssemblyInfo.cs"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config"/>
+      <None Include="packages.config"/>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
                    Other similar extension points exist, see Microsoft.Common.targets.
               <Target Name="BeforeBuild">
