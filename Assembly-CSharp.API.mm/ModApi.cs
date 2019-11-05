@@ -22,7 +22,7 @@ using UnityEngine;
 #pragma warning disable CS0108
 namespace API
 {
-	[BepInPlugin(Name: "Nimbatus-Mods API", Version: "2.0.0", GUID: "API")]
+	[PluginMetadata(Name: "Nimbatus-Mods API", Version: "2.0.0", GUID: "API")]
 	public class ModApi : BaseUnityPlugin
 	{
 	}
@@ -36,6 +36,21 @@ namespace API
 
 		// public OmegaModLoader Mod;
 		public extern void orig_Update();
+
+
+		private void OnGUI()
+		{
+			// Make a background box
+			GUI.Box(new Rect(10, 10, 100, 90), "Loader Menu");
+
+			// Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
+			if (GUI.Button(new Rect(20, 40, 80, 20), "Level 1"))
+				Debug.Log("Level 1");
+
+			// Make the second button.
+			if (GUI.Button(new Rect(20, 70, 80, 20), "Level 2"))
+				Debug.Log("Level 2");
+		}
 
 		public void Update()
 		{

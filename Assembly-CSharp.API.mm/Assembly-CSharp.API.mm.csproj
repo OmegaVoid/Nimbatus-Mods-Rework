@@ -58,7 +58,7 @@
     </Reference>
     <Reference Include="MonoMod, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\MonoMod.19.11.1.1\lib\net40\MonoMod.exe</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MonoMod.Utils, Version=19.11.1.1, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\MonoMod.Utils.19.11.1.1\lib\net40\MonoMod.Utils.dll</HintPath>
@@ -82,6 +82,10 @@
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
