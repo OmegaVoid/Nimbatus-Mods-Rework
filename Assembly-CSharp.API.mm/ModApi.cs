@@ -13,6 +13,8 @@ using MonoMod;
 
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 // ReSharper disable CollectionNeverQueried.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnassignedField.Global
@@ -32,29 +34,16 @@ namespace API
 	// ReSharper disable once InconsistentNaming
 	internal class patch_ShowVersionNumber : ShowVersionNumber
 	{
+		private API.ModManager _modManager = API.ModManager.Instance;
+
 		public int labelSizeAdd;
 
 		// public OmegaModLoader Mod;
 		public extern void orig_Update();
 
 
-		private void OnGUI()
-		{
-			// Make a background box
-			GUI.Box(new Rect(10, 10, 100, 90), "Loader Menu");
-
-			// Make the first button. If it is pressed, Application.Loadlevel (1) will be executed
-			if (GUI.Button(new Rect(20, 40, 80, 20), "Level 1"))
-				Debug.Log("Level 1");
-
-			// Make the second button.
-			if (GUI.Button(new Rect(20, 70, 80, 20), "Level 2"))
-				Debug.Log("Level 2");
-		}
-
 		public void Update()
 		{
-			labelSizeAdd = 0;
 			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
 			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
 						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
@@ -73,6 +62,11 @@ namespace API
 	}
 
 	#region API
+
+	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePart")]
+	public abstract class patch_DronePart : DronePart
+	{
+	}
 
 	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.BindableDronePart")]
 
@@ -136,7 +130,8 @@ namespace API
 
 	public static class AssetBundleModule
 	{
-		public static Dictionary<string, AssetBundle> AssetBundles;
+		public static Dictionary<string, AssetBundle> AssetBundles = new Dictionary<string, AssetBundle>();
+		public static Dictionary<string, object>      Cache        = new Dictionary<string, object>();
 
 		// Loads a new AssetBundle
 		/// <summary>
@@ -157,13 +152,30 @@ namespace API
 			AssetBundles.Add(name, myLoadedAssetBundle);
 		}
 
+		public static T LoadAssetFrom<T>(string name, string assetName) where T : Object
+		{
+			if (!AssetBundles.ContainsKey(name))
+			{
+				throw new InvalidOperationException("AssetBundle is not loaded");
+			}
+
+			object result;
+			if (!Cache.TryGetValue(assetName, out result))
+			{
+				result = AssetBundles[name].LoadAsset<T>(assetName);
+				Cache.Add(assetName, result);
+			}
+
+			return (T) result;
+		}
+
 		// Unloads an AssetBundle
 		/// <summary>
 		///     Unloads an AssetBundle from The AssetBundles Dictionary
 		/// </summary>
 		/// <param name="name">The Name of the AssetBundle to Unload</param>
 		/// <param name="unloadAllLoadedObjects"></param>
-		/// <exception cref="NullReferenceException">
+		/// <exception cref="System.NullReferenceException">
 		///     Thrown when there is no AssetBundle with the Specified Name in the
 		///     AssetBundles Dictionary
 		/// </exception>
@@ -185,14 +197,15 @@ namespace API
 		/// <param name="name">The Name of the AssetBundle to Load from</param>
 		/// <param name="assetName">The Name of the Prefab to Load</param>
 		/// <returns>The Prefab</returns>
-		/// <exception cref="TypeLoadException">Thrown when the Prefab doesnt exist</exception>
+		/// <exception cref="System.TypeLoadException">Thrown when the Prefab doesnt exist</exception>
 		public static GameObject LoadPrefabFrom(string name, string assetName)
 		{
-			var prefab = AssetBundles[name].LoadAsset<GameObject>(assetName);
+			var prefab = LoadAssetFrom<GameObject>(name, assetName);
 			if (prefab == null)
 				throw new TypeLoadException("Failed to load Prefab");
 
-			return AssetBundles[name].LoadAsset<GameObject>(assetName);
+
+			return prefab;
 		}
 	}
 
@@ -204,5 +217,62 @@ namespace API
 		public static readonly string ModsFolder   = Path.Combine(DataFolder, "Mods");
 		public static readonly string ConfigFolder = Path.Combine(DataFolder, "Config");
 		public static readonly string AssetsFolder = Path.Combine(DataFolder, "Assets");
+	}
+
+
+	public class ModManager
+	{
+		private static readonly Lazy<ModManager>
+			lazy =
+				new Lazy<ModManager>(() => new ModManager());
+
+		public Dictionary<string, NimbatusPlugin> NimbatusPlugins = new Dictionary<string, NimbatusPlugin>();
+
+		private ModManager()
+		{
+		}
+
+		public static ModManager Instance
+		{
+			get { return lazy.Value; }
+		}
+
+
+		public void Init()
+		{
+			foreach (var plugin in NimbatusPlugins)
+			{
+				plugin.Value.Init();
+				plugin.Value.OnLoad();
+				EnablePlugin(plugin.Key);
+			}
+		}
+
+		public void Register(NimbatusPlugin plugin)
+		{
+			NimbatusPlugins.Add(plugin.GetInfo().Metadata.GUID, plugin);
+		}
+
+		public void DisablePlugin(string pluginID)
+		{
+			if (NimbatusPlugins.ContainsKey(pluginID))
+				DisablePlugin(NimbatusPlugins[pluginID]);
+		}
+
+		public void DisablePlugin(NimbatusPlugin plugin)
+		{
+			plugin.DisablePlugin();
+		}
+
+		public void EnablePlugin(string pluginID)
+		{
+			if (NimbatusPlugins.ContainsKey(pluginID))
+				EnablePlugin(NimbatusPlugins[pluginID]);
+		}
+
+		public void EnablePlugin(NimbatusPlugin plugin)
+		{
+			plugin.EnablePlugin();
+		}
 	}
 }

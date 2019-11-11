@@ -44,6 +44,9 @@
       <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
+      <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\Nimbatus\Windows64\BepInEx\plugins\MMHOOK_Assembly-CSharp.dll</HintPath>
+      </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e">
       <HintPath>..\packages\Mono.Cecil.0.11.0\lib\net40\Mono.Cecil.dll</HintPath>
         <Private>False</Private>

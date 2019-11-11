@@ -1,13 +1,12 @@
-using System.Collections.Generic;
-
+using Assets.Nimbatus.GUI.Common.Scripts;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Thruster;
 
 using BepInEx;
+using BepInEx.Configuration;
+using BepInEx.Logging;
 
-using MonoMod;
-using MonoMod.ModInterop;
+using MonoMod.Utils;
 
 using UnityEngine;
 
@@ -17,137 +16,136 @@ namespace OmegaMod
 	[BepInPlugin("OmegaMod", "OmegaMod", "2.0.0")]
 	public class OmegaMod : BaseUnityPlugin
 	{
-		public void OnLoad()
+		private ConfigEntry<float> _sizePerSecond;
+
+		public OmegaMod()
 		{
+			Config = base.Config;
+			Logger = base.Logger;
+			var sizeDescription = new ConfigDescription("Shield Growth Rate");
+			var sizeDefinition  = new ConfigDefinition("Shield", "SizePerSecond");
+
+			_sizePerSecond = Config.Bind(sizeDefinition, 1f, sizeDescription);
 		}
+
+		public new static ManualLogSource Logger { get; set; }
+		public new static ConfigFile      Config { get; set; }
 
 		public void OnEnable()
 		{
 			// += your hooks
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.Start +=
+				EnergyShield_Start;
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.FixedUpdate +=
+				EnergyShield_FixedUpdate;
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.GetDetailedTooltip +=
+				EnergyShield_GetDetailedTooltip;
 		}
+
 
 		public void OnDisable()
 		{
 			// -= your hooks (a future Partiality update will do this automatically)
 		}
-	}
 
+		#region ShieldKeys
 
-	#region Hookers
+		public KeyBinding increaseSize = new KeyBinding("Grow",   KeyCode.None);
+		public KeyBinding decreaseSize = new KeyBinding("Shrink", KeyCode.None);
 
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield")]
-	internal class patch_EnergyShield : EnergyShield
-	{
-		[MonoModIgnore] private KeyBinding _activateShield;
+		#endregion
 
-		public KeyBinding _decreaseSize;
+		#region ThrusterKeys
 
-		public        KeyBinding _increaseSize;
-		public        float      SizePerSecond;
-		public extern void       orig_Start();
+		#endregion
 
-		protected override void Start()
+		#region EnergyShield
+
+		public void EnergyShield_FixedUpdate(
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.orig_FixedUpdate orig,
+			EnergyShield                                                                                          self
+		)
 		{
-			SizePerSecond = 1f;
-			orig_Start();
+			var KeyEventHub = self.FindEventKeyHubRecursive();
+			if (increaseSize.IsPressed(KeyEventHub))
+				self.ShieldSize += _sizePerSecond.Value;
 
-			AddKeyBindings();
+			if (decreaseSize.IsPressed(KeyEventHub))
+				self.ShieldSize -= _sizePerSecond.Value;
+
+			orig(self);
 		}
 
-		public override List<KeyBinding> GetKeyBindings()
+		public void EnergyShield_Start(
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.orig_Start orig,
+			EnergyShield                                                                                    self
+		)
 		{
-			_activateShield = new KeyBinding("Activate", KeyCode.None);
-			_increaseSize   = new KeyBinding("Grow",     KeyCode.None);
-			_decreaseSize   = new KeyBinding("Shrink",   KeyCode.None);
-			return new List<KeyBinding> {_activateShield, _increaseSize, _decreaseSize};
+			self.AddKeyBindings(increaseSize, decreaseSize);
+			orig(self);
 		}
 
-		//TODO: Fix Shield Tooltips
-		//public override string GetDetailedTooltip()
-		//{
-		//    string text = base.GetDetailedTooltip() + LabelHelper.NewLine;
-		//    string text2 = text;
-		//    text = string.Concat(new object[]
-		//    {
-		//        text2,
-		//        LabelHelper.White,
-		//        "Shield Size: ",
-		//        LabelHelper.Orange,
-		//        this.ShieldSize,
-		//        LabelHelper.NewLine
-		//    });
-		//    text2 = text;
-		//    text = string.Concat(new object[]
-		//    {
-		//        text2,
-		//        LabelHelper.White,
-		//        "Growth Rate: ",
-		//        LabelHelper.Orange,
-		//        this.SizePerSecond,
-		//        LabelHelper.NewLine
-		//    });
-		//    text2 = text;
-		//    return string.Concat(new object[]
-		//    {
-		//        text2,
-		//        LabelHelper.White,
-		//        "Energy per Second: ",
-		//        LabelHelper.Orange,
-		//        this.EnergyPerSecond
-		//    });
-		//}
-		public extern void orig_Update();
-
-		public override void Update()
+		public string EnergyShield_GetDetailedTooltip(
+			On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DefensiveParts.EnergyShield.orig_GetDetailedTooltip
+				orig,
+			EnergyShield self
+		)
 		{
-			if (_increaseSize.IsPressed(KeyEventHub))
-				ShieldSize += SizePerSecond;
+			DynData<EnergyShield> dynEnergy = new DynData<EnergyShield>(self);
 
-			if (_decreaseSize.IsPressed(KeyEventHub))
-				ShieldSize -= SizePerSecond;
-
-			orig_Update();
-		}
-	}
-
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Thruster.Thruster")]
-	internal class patch_Thruster : Thruster
-	{
-		[MonoModIgnore] private KeyBinding _giveThrust;
-
-		private KeyBinding _reverseThrust;
-
-
-		public override List<KeyBinding> GetKeyBindings()
-		{
-			_giveThrust    = new KeyBinding("Activate", KeyCode.W);
-			_reverseThrust = new KeyBinding("Reverse",  KeyCode.None);
-			if (ChargeUp)
-				return new List<KeyBinding> {_giveThrust, _reverseThrust};
-			return new List<KeyBinding> {_giveThrust};
-		}
-
-		public extern void orig_FixedUpdate();
-
-		public override void FixedUpdate()
-		{
-			if (ChargeUp)
+			string buildStringBase()
 			{
-				if (_reverseThrust.IsPressed(KeyEventHub))
-					Force = -100f;
-				else
-					Force = 100f;
+				return orig(self);
 			}
 
-			orig_FixedUpdate();
+			string str = buildStringBase() + "\nSomething";
+			return str               + LabelHelper.White +
+				   "Size per Second" + ": "              + LabelHelper.Orange +
+				   (object) _sizePerSecond;
 		}
 	}
 
 	#endregion
 
-	[ModExportName("OmegaMod")] // Defaults to the mod assembly name.
-	public static class ModExports
-	{
-		// Methods are exported.
-	}
+	#region Thruster
+
+	#endregion
+
+
+	#region Hookers
+
+//	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Thruster.Thruster")]
+//	internal class patch_Thruster : Thruster
+//	{
+//		[MonoModIgnore] private KeyBinding _giveThrust;
+//
+//		private KeyBinding _reverseThrust;
+//
+//
+//		public override List<KeyBinding> GetKeyBindings()
+//		{
+//			_giveThrust    = new KeyBinding("Activate", KeyCode.W);
+//			
+//			if (ChargeUp)
+//				return new List<KeyBinding> {_giveThrust, _reverseThrust};
+//			return new List<KeyBinding> {_giveThrust};
+//		}
+//
+//		public extern void orig_FixedUpdate();
+//
+//		public override void FixedUpdate()
+//		{
+//			if (ChargeUp)
+//			{
+//				if (_reverseThrust.IsPressed(KeyEventHub))
+//					Force = -100f;
+//				else
+//					Force = 100f;
+//			}
+//
+//			orig_FixedUpdate();
+//		}
+//	}
+
+	#endregion
 }
