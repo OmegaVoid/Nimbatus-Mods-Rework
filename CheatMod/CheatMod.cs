@@ -1,7 +1,5 @@
 ﻿using System;
 
-using API;
-
 using Assets.Nimbatus.Scripts.ResourceCollection;
 
 using BepInEx;
@@ -17,12 +15,11 @@ namespace CheatMod
 	[BepInPlugin(Name: "Cheat Mod", Version: "2.0.0", GUID: "CheatMod")]
 	public class CheatMod : BaseUnityPlugin
 	{
-		private readonly ModManager        _modManager = ModManager.Instance;
-		private          ConfigEntry<bool> _infiniteEnergy;
-		private          ConfigEntry<bool> _infiniteFuel;
-		private          ConfigEntry<bool> _infiniteResources;
-		private          EResourceType     _infiniteType = EResourceType.CommonOre;
-		private          ConfigEntry<bool> _oreType;
+		private ConfigEntry<bool> _infiniteEnergy;
+		private ConfigEntry<bool> _infiniteFuel;
+		private ConfigEntry<bool> _infiniteResources;
+		private EResourceType     _infiniteType = EResourceType.CommonOre;
+		private ConfigEntry<bool> _oreType;
 
 
 //		public void DisablePlugin() {

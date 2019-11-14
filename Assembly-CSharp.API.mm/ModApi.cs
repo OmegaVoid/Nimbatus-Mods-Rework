@@ -4,12 +4,16 @@ using System.IO;
 
 using Assets.Nimbatus.GUI.MainMenu.Scripts;
 using Assets.Nimbatus.Scripts.Persistence;
+using Assets.Nimbatus.Scripts.WorldObjects.DronePerks;
+using Assets.Nimbatus.Scripts.WorldObjects.Items;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Weapons.Upgrades;
 
 using BepInEx;
 
 using MonoMod;
+using MonoMod.Utils;
 
 using UnityEngine;
 
@@ -27,6 +31,16 @@ namespace API
 	[PluginMetadata(Name: "Nimbatus-Mods API", Version: "2.0.0", GUID: "API")]
 	public class ModApi : BaseUnityPlugin
 	{
+		void te()
+		{
+		}
+
+		enum Test
+		{
+			T1,
+			T2,
+			T3
+		}
 	}
 
 	[MonoModPatch("global::Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
@@ -34,8 +48,6 @@ namespace API
 	// ReSharper disable once InconsistentNaming
 	internal class patch_ShowVersionNumber : ShowVersionNumber
 	{
-		private API.ModManager _modManager = API.ModManager.Instance;
-
 		public int labelSizeAdd;
 
 		// public OmegaModLoader Mod;
@@ -126,6 +138,52 @@ namespace API
 		}
 	}
 
+	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.ItemManager")]
+
+	// ReSharper disable once InconsistentNaming
+	internal class patch_ItemManager : ItemManager
+	{
+		public List<NimbatusItem> ModItemPrefabs { get; set; }
+
+		public void AddItems(params NimbatusItem[] Items)
+		{
+			foreach (NimbatusItem nimbatusItem in Items)
+			{
+				nimbatusItem.InitStackSettings();
+				nimbatusItem.InitDronePerkSettings(SerializableMonobehaviour<DronePerkManager, DronePerkManagerData>
+												  .Instance.ActivePerk);
+				var dynItem = new DynData<NimbatusItem>(nimbatusItem);
+				if (SaveGameManager.CurrentGameSettings.HasPartUnlocking)
+				{
+					dynItem.Set("Unlocked", true);
+
+					if (nimbatusItem.DoNotImport || dynItem.Get<bool>("IsStackable"))
+						dynItem.Set("Unlocked", false);
+					if (nimbatusItem is WeaponAttributeUpgrade)
+						dynItem.Set("Unlocked", nimbatusItem.AlwaysUnlocked);
+					dynItem.Set("UnlimitedStackSize", !dynItem.Get<bool>("IsStackable"));
+					dynItem.Set("CurrentStackSize",   0);
+				}
+				else if (nimbatusItem.DoNotImport)
+				{
+					dynItem.Set("Unlocked", false);
+				}
+				else
+				{
+					dynItem.Set("Unlocked",
+								!(nimbatusItem is WeaponAttributeUpgrade) ||
+								RuntimeGlobals.GameModeSettings.AllTechnologyUnlocked);
+					if (nimbatusItem.AlwaysUnlocked)
+						dynItem.Set("Unlocked", true);
+					dynItem.Set("UnlimitedStackSize", true);
+				}
+
+				ModItemPrefabs.Add(nimbatusItem);
+				ItemPrefabs.AddRange(ModItemPrefabs);
+			}
+		}
+	}
+
 	#endregion
 
 	public static class AssetBundleModule
@@ -166,6 +224,7 @@ namespace API
 				Cache.Add(assetName, result);
 			}
 
+
 			return (T) result;
 		}
 
@@ -204,6 +263,15 @@ namespace API
 			if (prefab == null)
 				throw new TypeLoadException("Failed to load Prefab");
 
+			var script = prefab.GetComponent<NimbatusItemPlaceholder>();
+			if (prefab.GetComponent<NimbatusItemPlaceholder>())
+			{
+				prefab.AddComponent(typeof(NimbatusItem));
+				prefab.GetComponent<NimbatusItem>().Icon           = script.Icon;
+				prefab.GetComponent<NimbatusItem>().AlwaysUnlocked = script.AlwaysUnlocked;
+				prefab.GetComponent<NimbatusItem>().DoNotImport    = script.DoNotImport;
+			}
+
 
 			return prefab;
 		}
@@ -220,59 +288,59 @@ namespace API
 	}
 
 
-	public class ModManager
-	{
-		private static readonly Lazy<ModManager>
-			lazy =
-				new Lazy<ModManager>(() => new ModManager());
-
-		public Dictionary<string, NimbatusPlugin> NimbatusPlugins = new Dictionary<string, NimbatusPlugin>();
-
-		private ModManager()
-		{
-		}
-
-		public static ModManager Instance
-		{
-			get { return lazy.Value; }
-		}
-
-
-		public void Init()
-		{
-			foreach (var plugin in NimbatusPlugins)
-			{
-				plugin.Value.Init();
-				plugin.Value.OnLoad();
-				EnablePlugin(plugin.Key);
-			}
-		}
-
-		public void Register(NimbatusPlugin plugin)
-		{
-			NimbatusPlugins.Add(plugin.GetInfo().Metadata.GUID, plugin);
-		}
-
-		public void DisablePlugin(string pluginID)
-		{
-			if (NimbatusPlugins.ContainsKey(pluginID))
-				DisablePlugin(NimbatusPlugins[pluginID]);
-		}
-
-		public void DisablePlugin(NimbatusPlugin plugin)
-		{
-			plugin.DisablePlugin();
-		}
-
-		public void EnablePlugin(string pluginID)
-		{
-			if (NimbatusPlugins.ContainsKey(pluginID))
-				EnablePlugin(NimbatusPlugins[pluginID]);
-		}
-
-		public void EnablePlugin(NimbatusPlugin plugin)
-		{
-			plugin.EnablePlugin();
-		}
-	}
+//	public class ModManager
+//	{
+//		private static readonly Lazy<ModManager>
+//			lazy =
+//				new Lazy<ModManager>(() => new ModManager());
+//
+//		public Dictionary<string, NimbatusPlugin> NimbatusPlugins = new Dictionary<string, NimbatusPlugin>();
+//
+//		private ModManager()
+//		{
+//		}
+//
+//		public static ModManager Instance
+//		{
+//			get { return lazy.Value; }
+//		}
+//
+//
+//		public void Init()
+//		{
+//			foreach (var plugin in NimbatusPlugins)
+//			{
+//				plugin.Value.Init();
+//				plugin.Value.OnLoad();
+//				EnablePlugin(plugin.Key);
+//			}
+//		}
+//
+//		public void Register(NimbatusPlugin plugin)
+//		{
+//			NimbatusPlugins.Add(plugin.GetInfo().Metadata.GUID, plugin);
+//		}
+//
+//		public void DisablePlugin(string pluginID)
+//		{
+//			if (NimbatusPlugins.ContainsKey(pluginID))
+//				DisablePlugin(NimbatusPlugins[pluginID]);
+//		}
+//
+//		public void DisablePlugin(NimbatusPlugin plugin)
+//		{
+//			plugin.DisablePlugin();
+//		}
+//
+//		public void EnablePlugin(string pluginID)
+//		{
+//			if (NimbatusPlugins.ContainsKey(pluginID))
+//				EnablePlugin(NimbatusPlugins[pluginID]);
+//		}
+//
+//		public void EnablePlugin(NimbatusPlugin plugin)
+//		{
+//			plugin.EnablePlugin();
+//		}
+//	}
 }
