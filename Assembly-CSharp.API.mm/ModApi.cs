@@ -4,6 +4,7 @@ using System.IO;
 
 using Assets.Nimbatus.GUI.MainMenu.Scripts;
 using Assets.Nimbatus.Scripts.Persistence;
+using Assets.Nimbatus.Scripts.Persistence.SaveSystem;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts;
 
@@ -41,7 +42,7 @@ namespace API
 		{
 			labelSizeAdd = 0;
 			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
-			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
+			Label.text = "Version " + SaveManager.CurrentGameVersion + " Early Access " +
 						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
 		}
 
