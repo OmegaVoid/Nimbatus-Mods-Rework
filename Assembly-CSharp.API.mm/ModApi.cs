@@ -5,6 +5,8 @@ using System.IO;
 using Assets.Nimbatus.GUI.MainMenu.Scripts;
 using Assets.Nimbatus.Scripts.Persistence.SaveSystem;
 using Assets.Nimbatus.Scripts.WorldObjects.Items;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts;
 
 using BepInEx;
 
@@ -25,25 +27,21 @@ using Object = UnityEngine.Object;
 #pragma warning disable CS0108
 namespace API
 {
-	[BepInPlugin("codes.omegavoid.nimbatus-mods.api", "Nimbatus-Mods API", "3.0.0")]
-	public class ModApi : BaseUnityPlugin
-	{
-	}
-
-	[MonoModPatch("global::Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
+	[MonoModPatch("Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
 
 	// ReSharper disable once InconsistentNaming
 	internal class patch_ShowVersionNumber : ShowVersionNumber
 	{
+		[NonSerialized]
 		public int labelSizeAdd;
 
 		public void Start()
 		{
-			labelSizeAdd = 10;
-			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
+			// labelSizeAdd = 10;
+			// Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
 
 			//this.Mod = new OmegaModLoader();
-			// Debug.Log("Running OmegaMod");
+			Debug.Log("Running OmegaMod");
 
 			// this.Mod.Startup();
 			//Label.gameObject.AddComponent<ModConfigurator>();
@@ -57,17 +55,17 @@ namespace API
 		}
 
 		// public OmegaModLoader Mod;
-		public extern void orig_Update();
+		// public extern void orig_Update();
 	}
-#if FALSE
+
 	#region API
 
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePart")]
+	[MonoModPatch("Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePart")]
 	public abstract class patch_DronePart : DronePart
 	{
 	}
 
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.BindableDronePart")]
+	[MonoModPatch("Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.BindableDronePart")]
 
 	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_BindableDronePart : BindableDronePart
@@ -97,7 +95,7 @@ namespace API
 		}
 	}
 
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts.SensorPart")]
+	[MonoModPatch("Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts.SensorPart")]
 
 	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_SensorPart : SensorPart
@@ -127,7 +125,8 @@ namespace API
 		}
 	}
 
-	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.ItemManager")]
+#if FALSE
+	[MonoModPatch("Assets.Nimbatus.Scripts.WorldObjects.Items.ItemManager")]
 
 	// ReSharper disable once InconsistentNaming
 	internal class patch_ItemManager : ItemManager
@@ -173,9 +172,10 @@ namespace API
 		}
 	}
 
+#endif
 
 	#endregion
-#endif
+
 	public static class AssetBundleModule
 	{
 		public static Dictionary<string, AssetBundle> AssetBundles = new Dictionary<string, AssetBundle>();
