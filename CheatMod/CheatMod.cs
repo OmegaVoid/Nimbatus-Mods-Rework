@@ -15,30 +15,47 @@ namespace CheatMod
 	[BepInPlugin(Name: "Cheat Mod", Version: "2.0.0", GUID: "CheatMod")]
 	public class CheatMod : BaseUnityPlugin
 	{
-		private readonly ConfigWrapper<bool> _infiniteEnergy;
-		private readonly ConfigWrapper<bool> _oreType;
-		private          ConfigWrapper<bool> _infiniteFuel;
-		private          ConfigWrapper<bool> _infiniteResources;
-		private          EResourceType       _infiniteType = EResourceType.CommonOre;
+		private ConfigEntry<bool> _infiniteEnergy;
+		private ConfigEntry<bool> _infiniteFuel;
+		private ConfigEntry<bool> _infiniteResources;
+		private EResourceType     _infiniteType = EResourceType.CommonOre;
+		private ConfigEntry<bool> _oreType;
 
+
+//		public void DisablePlugin() {
+//			if( !enabled )
+//				return;
+//			enabled = false;
+//			OnDisable();
+//		}
+//
+//		public void EnablePlugin() {
+//			if( enabled )
+//				return;
+//			enabled = true;
+//			OnEnable();
+//		}
 
 		public CheatMod()
 		{
+			var boolValues = new AcceptableValueList<bool>(true, false);
 			Config = base.Config;
 			Logger = base.Logger;
-			var energyConf   = new ConfigDefinition("Cheats",    "Energy",    "Enable Infinite Energy");
-			var fuelConf     = new ConfigDefinition("Cheats",    "Fuel",      "Enable Infinite Fuel");
-			var resourceConf = new ConfigDefinition("Cheats",    "Resources", "Enable Infinite Resources");
-			var oreConf      = new ConfigDefinition("Resources", "Ore",       "false: Common Ore\ntrue:Rare Ore");
+			var energyDescription   = new ConfigDescription("Enable Infinite Energy",           boolValues);
+			var fuelDescription     = new ConfigDescription("Enable Infinite Fuel",             boolValues);
+			var resourceDescription = new ConfigDescription("Enable Infinite Resources",        boolValues);
+			var oreDescription      = new ConfigDescription("false: Common Ore\ntrue:Rare Ore", boolValues);
+			var energyConf          = new ConfigDefinition("Cheats",    "Energy");
+			var fuelConf            = new ConfigDefinition("Cheats",    "Fuel");
+			var resourceConf        = new ConfigDefinition("Cheats",    "Resources");
+			var oreConf             = new ConfigDefinition("Resources", "Ore");
+
+			_infiniteEnergy    = Config.Bind(energyConf,   false, energyDescription);
+			_infiniteFuel      = Config.Bind(fuelConf,     false, fuelDescription);
+			_infiniteResources = Config.Bind(resourceConf, false, resourceDescription);
+			_oreType           = Config.Bind(oreConf,      false, oreDescription);
 
 
-			Config.SaveOnConfigSet = true;
-			_infiniteEnergy        = Config.Wrap<bool>(energyConf);
-			_infiniteFuel          = Config.Wrap<bool>(fuelConf);
-			_infiniteResources     = Config.Wrap<bool>(resourceConf);
-			_oreType               = Config.Wrap<bool>(oreConf);
-
-			Logger.LogInfo(Config);
 			Config.ConfigReloaded += UpdateConfig;
 			OnEnable();
 		}
@@ -52,7 +69,8 @@ namespace CheatMod
 				_infiniteType = EResourceType.RareOre;
 			else
 				_infiniteType = EResourceType.CommonOre;
-			ModuleManager();
+
+			//ModuleManager();
 		}
 
 
