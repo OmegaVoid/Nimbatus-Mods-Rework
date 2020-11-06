@@ -1,3 +1,5 @@
+using System.IO;
+
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
@@ -13,15 +15,12 @@ namespace OmegaBlocks
 			Logger = base.Logger;
 
 			OnEnable();
+
+			API.AssetBundleModule.Load(Path.Combine(API.FolderStructure.AssetsFolder, "triangle.test"));
 		}
 
 		public new static ManualLogSource Logger { get; set; }
 		public new static ConfigFile      Config { get; set; }
-
-
-		public void OnLoad()
-		{
-		}
 
 		public void OnEnable()
 		{
@@ -31,6 +30,11 @@ namespace OmegaBlocks
 		public void OnDisable()
 		{
 			// -= your hooks
+		}
+
+
+		public void OnLoad()
+		{
 		}
 	}
 }

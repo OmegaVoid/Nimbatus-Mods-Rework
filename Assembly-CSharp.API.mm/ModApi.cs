@@ -3,17 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 
 using Assets.Nimbatus.GUI.MainMenu.Scripts;
-using Assets.Nimbatus.Scripts.Persistence;
-using Assets.Nimbatus.Scripts.WorldObjects.DronePerks;
+using Assets.Nimbatus.Scripts.Persistence.SaveSystem;
 using Assets.Nimbatus.Scripts.WorldObjects.Items;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.SensorParts;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Weapons.Upgrades;
 
 using BepInEx;
 
+using I2.Loc;
+
 using MonoMod;
-using MonoMod.Utils;
 
 using UnityEngine;
 
@@ -28,19 +25,9 @@ using Object = UnityEngine.Object;
 #pragma warning disable CS0108
 namespace API
 {
-	[PluginMetadata(Name: "Nimbatus-Mods API", Version: "2.0.0", GUID: "API")]
+	[BepInPlugin("codes.omegavoid.nimbatus-mods.api", "Nimbatus-Mods API", "3.0.0")]
 	public class ModApi : BaseUnityPlugin
 	{
-		void te()
-		{
-		}
-
-		enum Test
-		{
-			T1,
-			T2,
-			T3
-		}
 	}
 
 	[MonoModPatch("global::Assets.Nimbatus.GUI.MainMenu.Scripts.ShowVersionNumber")]
@@ -50,29 +37,29 @@ namespace API
 	{
 		public int labelSizeAdd;
 
-		// public OmegaModLoader Mod;
-		public extern void orig_Update();
+		public void Start()
+		{
+			labelSizeAdd = 10;
+			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
+
+			//this.Mod = new OmegaModLoader();
+			// Debug.Log("Running OmegaMod");
+
+			// this.Mod.Startup();
+			//Label.gameObject.AddComponent<ModConfigurator>();
+		}
 
 
 		public void Update()
 		{
-			Label.SetDimensions(Label.width + labelSizeAdd, Label.height + labelSizeAdd);
-			Label.text = "Version " + SaveGameManager.CurrentGameVersion + " Early Access " +
-						 "Modded using OmegaMod"; //+ this.Mod.ModInfo;
+			Label.text = LocalizationManager.GetTranslation("MainMenu/Version") +
+						 SaveManager.CurrentGameVersion                         + " Modded";
 		}
 
-		public void Start()
-		{
-			//this.Mod = new OmegaModLoader();
-			Debug.Log("Running OmegaMod");
-
-			// this.Mod.Startup();
-			//Label.gameObject.AddComponent<ModConfigurator>();
-
-			Debug.Log(Application.streamingAssetsPath);
-		}
+		// public OmegaModLoader Mod;
+		public extern void orig_Update();
 	}
-
+#if FALSE
 	#region API
 
 	[MonoModPatch("global::Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePart")]
@@ -85,7 +72,8 @@ namespace API
 	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_BindableDronePart : BindableDronePart
 	{
-		[MonoModIgnore] internal List<KeyBinding> KeyBindings;
+		[MonoModIgnore]
+		internal List<KeyBinding> KeyBindings;
 
 		// Adds KeyBindings to a BindableDronePart
 		/// <summary>
@@ -114,7 +102,8 @@ namespace API
 	// ReSharper disable once InconsistentNaming
 	internal abstract class patch_SensorPart : SensorPart
 	{
-		[MonoModIgnore] internal List<KeyBinding> EventBindings;
+		[MonoModIgnore]
+		internal List<KeyBinding> EventBindings;
 
 		// Adds EventBindings to a SensorPart
 		/// <summary>
@@ -184,8 +173,9 @@ namespace API
 		}
 	}
 
-	#endregion
 
+	#endregion
+#endif
 	public static class AssetBundleModule
 	{
 		public static Dictionary<string, AssetBundle> AssetBundles = new Dictionary<string, AssetBundle>();
@@ -213,9 +203,7 @@ namespace API
 		public static T LoadAssetFrom<T>(string name, string assetName) where T : Object
 		{
 			if (!AssetBundles.ContainsKey(name))
-			{
 				throw new InvalidOperationException("AssetBundle is not loaded");
-			}
 
 			object result;
 			if (!Cache.TryGetValue(assetName, out result))
@@ -280,11 +268,18 @@ namespace API
 
 	public static class FolderStructure
 	{
-		public static readonly string RootFolder   = Application.dataPath;
-		public static readonly string DataFolder   = Path.Combine(RootFolder, "OmegaData");
-		public static readonly string ModsFolder   = Path.Combine(DataFolder, "Mods");
-		public static readonly string ConfigFolder = Path.Combine(DataFolder, "Config");
-		public static readonly string AssetsFolder = Path.Combine(DataFolder, "Assets");
+		public static readonly string RootFolder = Paths.BepInExRootPath; //Application.dataPath;
+
+		//public static readonly string DataFolder   = Path.Combine(RootFolder, "OmegaData");
+		//public static readonly string ModsFolder   = Path.Combine(DataFolder, "Mods");
+		public static readonly string ConfigFolder = Paths.ConfigPath;
+		public static readonly string AssetsFolder = Path.Combine(RootFolder, "Assets");
+
+		static FolderStructure()
+		{
+			if (!Directory.Exists(AssetsFolder))
+				Directory.CreateDirectory(AssetsFolder);
+		}
 	}
 
 
