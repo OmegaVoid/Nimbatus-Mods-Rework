@@ -1,5 +1,4 @@
-﻿using Assets.Nimbatus.Scripts.ResourceCollection;
-using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
+﻿using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources;
 using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks;
 
@@ -16,16 +15,14 @@ namespace CheatMod
 		private static ConfigEntry<bool> _configInfiniteEnergy;
 		private static ConfigEntry<bool> _configInfiniteFuel;
 		private static ConfigEntry<bool> _configInfiniteResources;
-		private static ConfigEntry<bool> _configInfiniteResourceType;
 
 
 		public void Awake()
 		{
 			_configInfiniteEnergy = Config.Bind("Cheats", "Energy", false, "Enable Infinite Energy");
 
-			_configInfiniteFuel         = Config.Bind("Cheats",    "Fuel", false, "Enable Infinite Fuel");
-			_configInfiniteResources    = Config.Bind("Cheats",    "Resources", false, "Enable Infinite Resources");
-			_configInfiniteResourceType = Config.Bind("Resources", "Ore", false, "false: Common Ore\ntrue:Rare Ore");
+			_configInfiniteFuel      = Config.Bind("Cheats", "Fuel",      false, "Enable Infinite Fuel");
+			_configInfiniteResources = Config.Bind("Cheats", "Resources", false, "Enable Infinite Resources");
 
 
 			Harmony.CreateAndPatchAll(typeof(CheatMod));
@@ -75,25 +72,23 @@ namespace CheatMod
 			return true;
 		}
 
-		[HarmonyPatch(typeof(ResourceTank), "Awake")]
+		[HarmonyPatch(typeof(ResourceTank), "GetRechargePerSecond")]
 		[HarmonyPrefix]
-		private static bool InfiniteResourcesAwake(
+		private static bool InfiniteResources(
 
 			// ReSharper disable InconsistentNaming
-			ref ResourceTank __instance,
-			float            ___ResourceCapacity
+			float     ___ResourceCapacity,
+			ref float __result
 
 			// ReSharper restore InconsistentNaming
 		)
 		{
 			if (!_configInfiniteResources.Value)
 				return true;
-			__instance.SetResourceAmount(_configInfiniteResourceType.Value
-											 ? EResourceType.CommonOre
-											 : EResourceType.RareOre,
-										 ___ResourceCapacity);
+			__result = ___ResourceCapacity;
 
-			return true;
+
+			return false;
 		}
 	}
 }
