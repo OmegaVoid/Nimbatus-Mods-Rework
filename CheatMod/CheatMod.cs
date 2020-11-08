@@ -1,148 +1,99 @@
-﻿using System;
-
-using Assets.Nimbatus.Scripts.ResourceCollection;
+﻿using Assets.Nimbatus.Scripts.ResourceCollection;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources;
+using Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks;
 
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.Logging;
 
-using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries;
-using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources;
-using On.Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks;
+using HarmonyLib;
 
 namespace CheatMod
 {
-	[BepInPlugin(Name: "Cheat Mod", Version: "2.0.0", GUID: "CheatMod")]
+	[BepInPlugin("codes.omegavoid.nimbatus-mods.cheatmod", "Cheat Mod", "3.0.0.0")]
 	public class CheatMod : BaseUnityPlugin
 	{
-		private ConfigEntry<bool> _infiniteEnergy;
-		private ConfigEntry<bool> _infiniteFuel;
-		private ConfigEntry<bool> _infiniteResources;
-		private EResourceType     _infiniteType = EResourceType.CommonOre;
-		private ConfigEntry<bool> _oreType;
+		private static ConfigEntry<bool> _configInfiniteEnergy;
+		private static ConfigEntry<bool> _configInfiniteFuel;
+		private static ConfigEntry<bool> _configInfiniteResources;
+		private static ConfigEntry<bool> _configInfiniteResourceType;
 
 
-//		public void DisablePlugin() {
-//			if( !enabled )
-//				return;
-//			enabled = false;
-//			OnDisable();
-//		}
-//
-//		public void EnablePlugin() {
-//			if( enabled )
-//				return;
-//			enabled = true;
-//			OnEnable();
-//		}
-
-		public CheatMod()
+		public void Awake()
 		{
-			var boolValues = new AcceptableValueList<bool>(true, false);
-			Config = base.Config;
-			Logger = base.Logger;
-			var energyDescription   = new ConfigDescription("Enable Infinite Energy",           boolValues);
-			var fuelDescription     = new ConfigDescription("Enable Infinite Fuel",             boolValues);
-			var resourceDescription = new ConfigDescription("Enable Infinite Resources",        boolValues);
-			var oreDescription      = new ConfigDescription("false: Common Ore\ntrue:Rare Ore", boolValues);
-			var energyConf          = new ConfigDefinition("Cheats",    "Energy");
-			var fuelConf            = new ConfigDefinition("Cheats",    "Fuel");
-			var resourceConf        = new ConfigDefinition("Cheats",    "Resources");
-			var oreConf             = new ConfigDefinition("Resources", "Ore");
+			_configInfiniteEnergy = Config.Bind("Cheats", "Energy", false, "Enable Infinite Energy");
 
-			_infiniteEnergy    = Config.Bind(energyConf,   false, energyDescription);
-			_infiniteFuel      = Config.Bind(fuelConf,     false, fuelDescription);
-			_infiniteResources = Config.Bind(resourceConf, false, resourceDescription);
-			_oreType           = Config.Bind(oreConf,      false, oreDescription);
+			_configInfiniteFuel         = Config.Bind("Cheats",    "Fuel", false, "Enable Infinite Fuel");
+			_configInfiniteResources    = Config.Bind("Cheats",    "Resources", false, "Enable Infinite Resources");
+			_configInfiniteResourceType = Config.Bind("Resources", "Ore", false, "false: Common Ore\ntrue:Rare Ore");
 
 
-			Config.ConfigReloaded += UpdateConfig;
-			OnEnable();
+			Harmony.CreateAndPatchAll(typeof(CheatMod));
 		}
 
-		public new static ManualLogSource Logger { get; set; }
-		public new static ConfigFile      Config { get; set; }
+		[HarmonyPatch(typeof(FuelTank), "Awake")]
+		[HarmonyPrefix]
+		private static bool InfiniteFuelAwake(
 
-		private void UpdateConfig(object sender, EventArgs eventArgs)
-		{
-			if (_oreType.Value)
-				_infiniteType = EResourceType.RareOre;
-			else
-				_infiniteType = EResourceType.CommonOre;
+			// ReSharper disable InconsistentNaming
+			ref float ___CurrentFuelAmount,
+			ref float ___MaxFuelAmount,
+			ref float ___RechargePerSecond
 
-			//ModuleManager();
-		}
-
-
-		public void OnEnable()
-		{
-			// += your hooks
-			if (_infiniteEnergy.Value)
-				Battery.Awake += Battery_Awake;
-			if (_infiniteEnergy.Value)
-				FuelTank.Awake += FuelTank_Awake;
-			if (_infiniteEnergy.Value)
-				ResourceTank.FixedUpdate +=
-					ResourceTank_FixedUpdate;
-		}
-
-		public void ModuleManager()
-		{
-			if (_infiniteEnergy.Value)
-				Battery.Awake += Battery_Awake;
-			else
-				Battery.Awake -= Battery_Awake;
-			if (_infiniteEnergy.Value)
-				FuelTank.Awake += FuelTank_Awake;
-			else
-				FuelTank.Awake -= FuelTank_Awake;
-			if (_infiniteEnergy.Value)
-				ResourceTank.FixedUpdate +=
-					ResourceTank_FixedUpdate;
-			else
-				ResourceTank.FixedUpdate -=
-					ResourceTank_FixedUpdate;
-		}
-
-		private void ResourceTank_FixedUpdate(
-			ResourceTank.orig_FixedUpdate                                                         orig,
-			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.DronePartResources.ResourceTank self
+			// ReSharper restore InconsistentNaming
 		)
 		{
-			self.SetResourceAmount(_infiniteType, self.ResourceCapacity);
-			orig(self);
+			if (!_configInfiniteFuel.Value)
+				return true;
+			___CurrentFuelAmount = 1E+19f;
+			___MaxFuelAmount     = 1E+19f;
+			___RechargePerSecond = 1E+19f;
+
+
+			return true;
 		}
 
-		private void FuelTank_Awake(
-			FuelTank.orig_Awake                                                      orig,
-			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.FuelTanks.FuelTank self
+		[HarmonyPatch(typeof(Battery), "Awake")]
+		[HarmonyPrefix]
+		private static bool InfiniteEnergyAwake(
+
+			// ReSharper disable InconsistentNaming
+			ref float ___CurrentEnergyAmount,
+			ref float ___MaxEnergyAmount,
+			ref float ___RechargePerSecond
+
+			// ReSharper restore InconsistentNaming
 		)
 		{
-			self.CurrentFuelAmount = 1E+19f;
-			self.MaxFuelAmount     = 1E+19f;
-			self.RechargePerSecond = 1E+19f;
-			orig(self);
+			if (!_configInfiniteEnergy.Value)
+				return true;
+			___MaxEnergyAmount     = 1E+19f;
+			___CurrentEnergyAmount = 1E+19f;
+			___RechargePerSecond   = 1E+19f;
+
+
+			return true;
 		}
 
-		private void Battery_Awake(
-			Battery.orig_Awake                                                      orig,
-			Assets.Nimbatus.Scripts.WorldObjects.Items.DroneParts.Batteries.Battery self
+		[HarmonyPatch(typeof(ResourceTank), "Awake")]
+		[HarmonyPrefix]
+		private static bool InfiniteResourcesAwake(
+
+			// ReSharper disable InconsistentNaming
+			ref ResourceTank __instance,
+			float            ___ResourceCapacity
+
+			// ReSharper restore InconsistentNaming
 		)
 		{
-			self.MaxEnergyAmount     = 1E+19f;
-			self.CurrentEnergyAmount = 1E+19f;
-			self.RechargePerSecond   = 1E+19f;
-			orig(self);
-		}
+			if (!_configInfiniteResources.Value)
+				return true;
+			__instance.SetResourceAmount(_configInfiniteResourceType.Value
+											 ? EResourceType.CommonOre
+											 : EResourceType.RareOre,
+										 ___ResourceCapacity);
 
-
-		public void OnDisable()
-		{
-			// -= your hooks (a future Partiality update will do this automatically)
-			Battery.Awake  -= Battery_Awake;
-			FuelTank.Awake -= FuelTank_Awake;
-			ResourceTank.FixedUpdate -=
-				ResourceTank_FixedUpdate;
+			return true;
 		}
 	}
 }

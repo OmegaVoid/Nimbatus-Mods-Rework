@@ -37,14 +37,16 @@
             <Private>False</Private>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\Nimbatus\Windows64\BepInEx\DumpedAssemblies\Assembly-CSharp.dll</HintPath>
+            <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\Assembly-CSharp.dll</HintPath>
             <Private>False</Private>
         </Reference>
         <Reference Include="BepInEx, Version=5.3.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.dll</HintPath>
+            <Private>False</Private>
         </Reference>
-        <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\Nimbatus\Windows64\BepInEx\plugins\MMHOOK_Assembly-CSharp.dll</HintPath>
+        <Reference Include="BepInEx.Harmony, Version=2.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>..\Nimbatus\Windows64\BepInEx\core\BepInEx.Harmony.dll</HintPath>
+            <Private>False</Private>
         </Reference>
         <Reference Include="Sirenix.Serialization, Version=2.1.9.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\Sirenix.Serialization.dll</HintPath>
@@ -54,10 +56,6 @@
         <Reference Include="System.Core"/>
         <Reference Include="System.Data"/>
         <Reference Include="System.Xml"/>
-        <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-            <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>..\Nimbatus\Windows64\Nimbatus_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
             <Private>False</Private>
