@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheatMod", "CheatMod\CheatM
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OmegaBlocks", "OmegaBlocks\OmegaBlocks.csproj", "{FA988593-2370-4F8D-9679-C3C753304920}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMod", "ExampleMod\ExampleMod.csproj", "{6611A94A-2AE6-4C77-8CD0-5D8280AF2DDF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleMod", "ExampleMod\ExampleMod.csproj", "{6FA07ED3-EBE8-4403-AC04-6BAA9DF8FF99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +32,9 @@ Global
 		{FA988593-2370-4F8D-9679-C3C753304920}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA988593-2370-4F8D-9679-C3C753304920}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA988593-2370-4F8D-9679-C3C753304920}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6611A94A-2AE6-4C77-8CD0-5D8280AF2DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6611A94A-2AE6-4C77-8CD0-5D8280AF2DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6611A94A-2AE6-4C77-8CD0-5D8280AF2DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6611A94A-2AE6-4C77-8CD0-5D8280AF2DDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FA07ED3-EBE8-4403-AC04-6BAA9DF8FF99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FA07ED3-EBE8-4403-AC04-6BAA9DF8FF99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FA07ED3-EBE8-4403-AC04-6BAA9DF8FF99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FA07ED3-EBE8-4403-AC04-6BAA9DF8FF99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
